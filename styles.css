@@ -1,0 +1,245 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #000;
+    color: #fff;
+    font-family: 'Courier New', monospace;
+    overflow: hidden;
+    height: 100vh;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 20px;
+}
+
+/* Цифровой таймер */
+.digital-timer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.timer-display {
+    font-size: 4rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.timer-display > span:nth-child(2)::before,
+.timer-display > span:nth-child(3)::before,
+.timer-display > span:nth-child(4)::before,
+.timer-display > span:nth-child(5)::before,
+.timer-display > span:nth-child(6)::before {
+    content: ":";
+    margin-right: 10px;
+}
+
+.timer-labels {
+    display: flex;
+    gap: 20px;
+    font-size: 1rem;
+    opacity: 0.8;
+}
+
+.timer-labels span {
+    min-width: 60px;
+}
+
+/* Аналоговые часы */
+.analog-clock {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.clock-face {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    background: transparent;
+}
+
+.hand {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    transform-origin: bottom;
+    background: #fff;
+    border-radius: 2px;
+}
+
+.seconds-hand {
+    width: 2px;
+    height: 120px;
+    background: #ff6b6b;
+    transform: translateX(-50%) rotate(0deg);
+}
+
+.minutes-hand {
+    width: 3px;
+    height: 100px;
+    background: #4ecdc4;
+    transform: translateX(-50%) rotate(0deg);
+}
+
+.hours-hand {
+    width: 4px;
+    height: 80px;
+    background: #45b7d1;
+    transform: translateX(-50%) rotate(0deg);
+}
+
+.days-hand {
+    width: 5px;
+    height: 50px;
+    background: #96ceb4;
+    transform: translateX(-50%) rotate(0deg);
+}
+
+.months-hand {
+    width: 5px;
+    height: 50px;
+    background: #feca57;
+    transform: translateX(-50%) rotate(0deg);
+}
+
+.years-hand {
+    width: 5px;
+    height: 50px;
+    background: #ff9ff3;
+    transform: translateX(-50%) rotate(0deg);
+}
+
+.center-dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Разметка циферблата */
+.markings {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .timer-display {
+        font-size: 2.5rem;
+        letter-spacing: 1px;
+        gap: 5px;
+    }
+    
+    .timer-display > span:nth-child(2)::before,
+    .timer-display > span:nth-child(3)::before,
+    .timer-display > span:nth-child(4)::before,
+    .timer-display > span:nth-child(5)::before,
+    .timer-display > span:nth-child(6)::before {
+        content: ":";
+        margin-right: 5px;
+    }
+    
+    .timer-labels {
+        gap: 10px;
+        font-size: 0.8rem;
+    }
+    
+    .timer-labels span {
+        min-width: 40px;
+    }
+    
+    .clock-face {
+        width: 200px;
+        height: 200px;
+    }
+    
+    .seconds-hand { height: 80px; }
+    .minutes-hand { height: 65px; }
+    .hours-hand { height: 50px; }
+    .days-hand { height: 35px; }
+    .months-hand { height: 35px; }
+    .years-hand { height: 35px; }
+}
+
+/* Горизонтальная ориентация на мобильных */
+@media (max-width: 768px) and (orientation: landscape) {
+    .container {
+        flex-direction: row;
+        gap: 20px;
+    }
+    
+    .digital-timer {
+        flex: 1;
+        justify-content: center;
+    }
+    
+    .analog-clock {
+        flex: 1;
+    }
+    
+    .clock-face {
+        width: 250px;
+        height: 250px;
+    }
+    
+    .seconds-hand { height: 100px; }
+    .minutes-hand { height: 80px; }
+    .hours-hand { height: 65px; }
+    .days-hand { height: 45px; }
+    .months-hand { height: 45px; }
+    .years-hand { height: 45px; }
+    
+    /* Две строчки для цифрового таймера */
+    .timer-display {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: 10px;
+        align-items: center;
+        justify-items: center;
+    }
+    
+    .timer-display > span:nth-child(1) { grid-column: 1; grid-row: 1; } /* годы */
+    .timer-display > span:nth-child(2) { grid-column: 2; grid-row: 1; } /* месяцы */
+    .timer-display > span:nth-child(3) { grid-column: 3; grid-row: 1; } /* дни */
+    .timer-display > span:nth-child(4) { grid-column: 1; grid-row: 2; } /* часы */
+    .timer-display > span:nth-child(5) { grid-column: 2; grid-row: 2; } /* минуты */
+    .timer-display > span:nth-child(6) { grid-column: 3; grid-row: 2; } /* секунды */
+    
+    /* Убираем двоеточия в горизонтальной ориентации */
+    .timer-display > span::before {
+        content: none;
+        margin-right: 0;
+    }
+} 

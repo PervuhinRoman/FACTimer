@@ -1,0 +1,16 @@
+{
+  "name": "timer-sync",
+  "version": "1.0.0",
+  "description": "Таймер с синхронизацией между браузерами",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'Build complete'",
+    "dev": "netlify dev"
+  },
+  "keywords": ["timer", "netlify", "functions"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "netlify-cli": "^15.0.0"
+  }
+} 
