@@ -238,7 +238,19 @@ body {
     .timer-display > span:nth-child(6) { grid-column: 3; grid-row: 2; } /* секунды */
     
     /* Убираем двоеточия в горизонтальной ориентации */
-    .timer-display > span::before {
+    /* .timer-display > span::before {
+        content: none;
+        margin-right: 0;
+    } */
+    .timer-display > span:nth-child(2)::before,
+    .timer-display > span:nth-child(3)::before,
+    .timer-display > span:nth-child(5)::before,
+    .timer-display > span:nth-child(6)::before {
+        content: ":";
+        margin-right: 5px;
+    }
+
+    .timer-display > span:nth-child(4)::before {
         content: none;
         margin-right: 0;
     }
