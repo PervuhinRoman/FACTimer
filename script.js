@@ -10,17 +10,12 @@ class Timer {
         try {
             // Сначала пытаемся получить время с сервера
             const serverTime = await this.getServerStartTime();
-            if (serverTime) {
-                this.startDate = new Date(serverTime);
-                this.isInitialized = true;
-            } else {
-                // Если сервер недоступен, используем локальное время
-                this.startDate = this.getLocalStartDate();
-                this.isInitialized = true;
-            }
+            this.startDate = new Date(serverTime);
+            this.isInitialized = true;
         } catch (error) {
-            console.log('Используем локальное время:', error);
-            this.startDate = this.getLocalStartDate();
+            console.log('Ошибка получения времени с сервера, используем глобальную дату:', error);
+            // В случае ошибки используем глобальную дату
+            this.startDate = new Date('2025-08-24T00:00:00.000Z');
             this.isInitialized = true;
         }
 
@@ -36,27 +31,26 @@ class Timer {
             const response = await fetch('/.netlify/functions/getStartTime');
             if (response.ok) {
                 const data = await response.json();
-                return data.startTime;
+                if (data.startTime) {
+                    return data.startTime;
+                }
             }
         } catch (error) {
             console.log('Ошибка получения времени с сервера:', error);
         }
-        return null;
+        // Если на сервере нет даты, возвращаем глобальную дату
+        return '2025-08-24T00:00:00.000Z';
     }
 
     getLocalStartDate() {
-        // Проверяем, есть ли сохраненная дата
-        const savedDate = localStorage.getItem('timerStartDate');
-        if (savedDate) {
-            return new Date(parseInt(savedDate));
-        } else {
-            // Если нет сохраненной даты, используем текущий момент
-            const now = new Date();
-            localStorage.setItem('timerStartDate', now.getTime().toString());
-            // Сохраняем на сервер
-            this.saveServerStartTime(now.toISOString());
-            return now;
-        }
+        // Устанавливаем глобальную стартовую дату: 0:00 24.08.2025
+        const globalStartDate = new Date('2025-08-24T00:00:00.000Z');
+        
+        // Всегда используем глобальную дату
+        localStorage.setItem('timerStartDate', globalStartDate.getTime().toString());
+        // Сохраняем на сервер
+        this.saveServerStartTime(globalStartDate.toISOString());
+        return globalStartDate;
     }
 
     async saveServerStartTime(startTime) {
@@ -76,6 +70,7 @@ class Timer {
     updateTimerSmooth() {
         const now = new Date();
         const diff = now - this.startDate;
+        //const diff = this.startDate - now; // Изменено: вычисляем время ДО даты
         
         // Вычисляем компоненты времени с миллисекундами для плавности
         const totalSeconds = diff / 1000;
@@ -85,18 +80,18 @@ class Timer {
         const totalMonths = totalDays / 30.44;
         const totalYears = totalDays / 365.25;
 
-        // Целочисленные значения для цифрового таймера
-        const years = Math.floor(totalYears);
-        const months = Math.floor(totalMonths) % 12;
-        const days = Math.floor(totalDays) % 30;
-        const hours = Math.floor(totalHours) % 24;
-        const minutes = Math.floor(totalMinutes) % 60;
-        const seconds = Math.floor(totalSeconds) % 60;
+        // Целочисленные значения для цифрового таймера (абсолютные значения)
+        const years = Math.abs(Math.floor(totalYears));
+        const months = Math.abs(Math.floor(totalMonths) % 12);
+        const days = Math.abs(Math.floor(totalDays) % 30);
+        const hours = Math.abs(Math.floor(totalHours) % 24);
+        const minutes = Math.abs(Math.floor(totalMinutes) % 60);
+        const seconds = Math.abs(Math.floor(totalSeconds) % 60);
 
         // Обновляем цифровой таймер каждую секунду
-        if (Math.floor(totalSeconds) !== this.lastSecond) {
+        if (Math.floor(Math.abs(totalSeconds)) !== this.lastSecond) {
             this.updateDigitalTimer(years, months, days, hours, minutes, seconds);
-            this.lastSecond = Math.floor(totalSeconds);
+            this.lastSecond = Math.floor(Math.abs(totalSeconds));
         }
         
         // Обновляем аналоговые часы плавно
@@ -156,35 +151,35 @@ class Timer {
 
 
     updateAnalogClockSmooth(now, totalSeconds, totalMinutes, totalHours, totalDays, totalMonths, totalYears) {
-        // Секунды: плавное движение с миллисекундами
-        const secondsDegrees = (totalSeconds % 60) * 6;
+        // Секунды: плавное движение с миллисекундами (абсолютные значения)
+        const secondsDegrees = (Math.abs(totalSeconds) % 60) * 6;
         document.getElementById('seconds-hand').style.transform = 
             `translateX(-50%) rotate(${secondsDegrees}deg)`;
 
-        // Минуты: плавное движение с секундами
-        const minutesDegrees = (totalMinutes % 60) * 6;
+        // Минуты: плавное движение с секундами (абсолютные значения)
+        const minutesDegrees = (Math.abs(totalMinutes) % 60) * 6;
         document.getElementById('minutes-hand').style.transform = 
             `translateX(-50%) rotate(${minutesDegrees}deg)`;
 
-        // Часы: плавное движение с минутами
-        const hoursDegrees = (totalHours % 12) * 30;
+        // Часы: плавное движение с минутами (абсолютные значения)
+        const hoursDegrees = (Math.abs(totalHours) % 12) * 30;
         document.getElementById('hours-hand').style.transform = 
             `translateX(-50%) rotate(${hoursDegrees}deg)`;
 
-        // Дни: плавное движение (1-10)
-        const daysInCycle = (totalDays % 10);
+        // Дни: плавное движение (1-10) (абсолютные значения)
+        const daysInCycle = (Math.abs(totalDays) % 10);
         const daysDegrees = daysInCycle * 36;
         document.getElementById('days-hand').style.transform = 
             `translateX(-50%) rotate(${daysDegrees}deg)`;
 
-        // Месяцы: плавное движение (1-12)
-        const monthsInCycle = (totalMonths % 12);
+        // Месяцы: плавное движение (1-12) (абсолютные значения)
+        const monthsInCycle = (Math.abs(totalMonths) % 12);
         const monthsDegrees = monthsInCycle * 30;
         document.getElementById('months-hand').style.transform = 
             `translateX(-50%) rotate(${monthsDegrees}deg)`;
 
-        // Годы: плавное движение (1-10)
-        const yearsInCycle = (totalYears % 10);
+        // Годы: плавное движение (1-10) (абсолютные значения)
+        const yearsInCycle = (Math.abs(totalYears) % 10);
         const yearsDegrees = yearsInCycle * 36;
         document.getElementById('years-hand').style.transform = 
             `translateX(-50%) rotate(${yearsDegrees}deg)`;

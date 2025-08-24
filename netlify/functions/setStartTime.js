@@ -7,7 +7,7 @@ const dataFile = path.join(__dirname, 'timer-data.json');
 function ensureDataFile() {
     if (!fs.existsSync(dataFile)) {
         const defaultData = {
-            startTime: new Date().toISOString(),
+            startTime: '2025-08-24T00:00:00.000Z',
             lastUpdated: new Date().toISOString()
         };
         fs.writeFileSync(dataFile, JSON.stringify(defaultData, null, 2));
@@ -40,22 +40,9 @@ exports.handler = async function(event, context) {
         }
 
         if (event.httpMethod === 'POST') {
-            const requestBody = JSON.parse(event.body || '{}');
-            const { startTime } = requestBody;
-
-            if (!startTime) {
-                return {
-                    statusCode: 400,
-                    headers: {
-                        ...headers,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ error: 'startTime is required' })
-                };
-            }
-
+            // Всегда устанавливаем глобальную дату, игнорируя переданное значение
             const data = {
-                startTime: startTime,
+                startTime: '2025-08-24T00:00:00.000Z',
                 lastUpdated: new Date().toISOString()
             };
 

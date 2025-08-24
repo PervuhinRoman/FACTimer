@@ -7,13 +7,23 @@ const dataFile = path.join(__dirname, 'timer-data.json');
 function ensureDataFile() {
     if (!fs.existsSync(dataFile)) {
         const defaultData = {
-            startTime: new Date().toISOString(),
+            startTime: '2025-08-24T00:00:00.000Z',
             lastUpdated: new Date().toISOString()
         };
         fs.writeFileSync(dataFile, JSON.stringify(defaultData, null, 2));
         return defaultData;
     }
-    return JSON.parse(fs.readFileSync(dataFile, 'utf8'));
+    
+    const data = JSON.parse(fs.readFileSync(dataFile, 'utf8'));
+    
+    // Если на сервере нет даты или она отличается от глобальной, устанавливаем глобальную
+    if (!data.startTime || data.startTime !== '2025-08-24T00:00:00.000Z') {
+        data.startTime = '2025-08-24T00:00:00.000Z';
+        data.lastUpdated = new Date().toISOString();
+        fs.writeFileSync(dataFile, JSON.stringify(data, null, 2));
+    }
+    
+    return data;
 }
 
 exports.handler = async function(event, context) {
